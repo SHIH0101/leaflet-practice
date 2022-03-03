@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #EBE9E2;
+}
+
+.container {
+    margin: auto;
+    width: 90vw;
+}
+
+.demo {
+    display: flex;
+}
+
+.demo h2 {
+    font-size: 14px;
+    margin-right: 10px;
+    padding: 10px;
+}
+
+.demo a {
+    color: #000;
+}
+
+.code {
+    margin: 20px auto;
+}
+
+.code img {
+    width: 100%;
+}

@@ -1,0 +1,23 @@
+#map {
+    width: 100%;
+    height: 80vh;
+}
+
+svg {
+    position: relative;
+    left: -42.5px;
+    top: -42.5px;
+}
+
+.demo h2:nth-child(1) {
+    background-color: #41589e;
+    color: #fff;
+}
+
+.demo h2:nth-child(1) a {
+    color: #fff;
+}
+
+.code {
+    margin: 20px auto;
+}
