@@ -10,19 +10,11 @@ let mapZoom = 12;
 let mapCenter = [25.047929607735554, 121.51699271828755];
 let map = L.map('map', mapConfig).setView(mapCenter, mapZoom);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    id: 'basicLayer',
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>         contributors'
-}).addTo(map);
-
 map.on('click', removeClicked);
-
-
 
 /*-------------------------------------------
             control layers
 -------------------------------------------*/
-// let stationGroup = stationMarkerGroup.concat(stationPolylines);
 let allStationLayer = new L.featureGroup();
 
 let basicLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -35,7 +27,6 @@ let OpenStreetMap_DELayer = L.tileLayer('https://{s}.tile.openstreetmap.de/tiles
     maxZoom: 18,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
-
 
 
 let baseMaps = {
@@ -95,8 +86,9 @@ function createStationMarker(point) {
 
     let marker = L.marker([point.lat, point.lng], {
         group: 'station',
-        draggable: false,
-        icon: createStationIcon(point.textTop, point.name, point.id, point.status)
+        id: point.id,
+        draggable: true,
+        icon: createStationIcon()
     }).addTo(map);
     allStationLayer.addLayer(marker);
 
@@ -106,19 +98,18 @@ function createStationMarker(point) {
     marker.latlng = [point.lat, point.lng];
     return marker;
 
-    function createStationIcon(textTop, name, id, status) {
+    function createStationIcon() {
 
-
-        let iconTemplate = `<div class="marker" id=${id}>  
+        let iconTemplate = `<div class="marker" id=${point.id}>  
                                 <svg version="1.1" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
                                     <g>
-                                        <circle cx="50" cy="50" r="48" class="${status}">
+                                        <circle cx="50" cy="50" r="48" class="${point.status}">
                                         </circle>
-                                        <text x="50" y="20" style="font-size:14px;text-anchor:middle;">${String(textTop)}</text>
+                                        <text x="50" y="20" style="font-size:14px;text-anchor:middle;">${point.textTop}</text>
                                         <image href="./images//marker-icon-2x-gold.png"
                                         width="30px" height="30px" x="50%" y="50%" transform="translate(-15,-15)"
                                             width="30px" height="30px" x="50%" y="50%" transform="translate(-15,-15)" />
-                                        <text x="50" y="80" style="font-size:14px;text-anchor:middle;">${String(name)}</text>
+                                        <text x="50" y="80" style="font-size:14px;text-anchor:middle;">${point.name}</text>
                                     </g>
                                 </svg> 
                         </div>`;
@@ -138,6 +129,7 @@ function createStationMarker(point) {
             backgroundCircle.setAttribute("style", "stroke:#2C9090; stroke-width:2; fill:rgba(159, 207, 207, 0.609);");
         }
         L.DomUtil.addClass(backgroundCircle, 'clicked')
+
         map.setView(e.target.getLatLng(), mapZoom);
     }
 }
@@ -244,7 +236,6 @@ function removeClicked() {
 
 
 function dragHandler(e) {
-
     let polylines = allPolylines[e.target.options.group].polyline,
         latlngs = allPolylines[e.target.options.group].latlng,
         oldLat = e.target.latlng[0],
@@ -273,4 +264,12 @@ function dragHandler(e) {
     })
 
     e.target.latlng = newLatlng;
+
+    let changePoint = data.find(el => el.id === e.target.options.id)
+    changePoint.lat = newLatlng[0];
+    changePoint.lng = newLatlng[1];
+
+    let changeElement = L.DomUtil.get(`marker_${e.target.options.id}`)
+    changeElement.children[1].children[0].innerText = newLatlng[1];
+    changeElement.children[2].children[0].innerText = newLatlng[0];
 }
